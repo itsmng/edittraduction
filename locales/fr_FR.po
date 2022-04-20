@@ -1,0 +1,52 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-14 13:51+0200\n"
+"PO-Revision-Date: 2022-04-19 20:37+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: .\n"
+
+#: front/edittraduction.form.php:15 setup.php:38
+#: inc/edittraduction.class.php:86 inc/config.class.php:8
+msgid "Edit traduction"
+msgstr "Modifier la traduction"
+
+#: front/edittraduction.form.php:37
+msgid "the treduction %1$s has been modified"
+msgstr "le %1$s de tréduction a été modifié"
+
+#: inc/edittraduction.class.php:86 front/edittraduction.form.php:46
+msgid "You don't have access denied to modify %1$s"
+msgstr "Vous n’avez pas d’accès  pour modifier %1$s"
+
+#: front/edittraduction.form.php:66
+msgid "Enable your plugin"
+msgstr "Activez votre plugin"
+
+#: inc/profile.class.php:104
+msgid "Create"
+msgstr "Créer"
+
+#: inc/profile.class.php:105
+msgid "Read"
+msgstr "Lecture"
+
+#: inc/profile.class.php:106
+msgid "Update"
+msgstr "Modifier"
+
+#: inc/profile.class.php:108
+msgid "Delete permanently"
+msgstr "Supprimer définitivement"
+
+#: inc/profile.class.php:143
+msgid "General"
+msgstr "Général"

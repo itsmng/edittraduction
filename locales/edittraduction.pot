@@ -1,0 +1,56 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-19 20:38+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: front/edittraduction.form.php:15 setup.php:38
+#: inc/edittraduction.class.php:86 inc/config.class.php:8
+msgid "Edit traduction"
+msgstr ""
+
+#: front/edittraduction.form.php:37
+msgid "the treduction %1$s has been modified"
+msgstr ""
+
+#: inc/edittraduction.class.php:86 front/edittraduction.form.php:46
+msgid "You don't have access denied to modify %1$s"
+msgstr ""
+
+#: front/edittraduction.form.php:66
+msgid "Enable your plugin"
+msgstr ""
+
+#: inc/profile.class.php:104
+msgid "Create"
+msgstr ""
+
+#: inc/profile.class.php:105
+msgid "Read"
+msgstr ""
+
+#: inc/profile.class.php:106
+msgid "Update"
+msgstr ""
+
+#: inc/profile.class.php:108
+msgid "Delete permanently"
+msgstr ""
+
+#: inc/profile.class.php:143
+msgid "General"
+msgstr ""
