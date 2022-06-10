@@ -9,27 +9,43 @@ $edittraduction = new PluginEdittraductionEdittraduction();
 
 if ($plugin->isActivated('edittraduction')) {
     
-    Html::header(__("Edit traduction", "edittraduction"), $_SERVER['PHP_SELF'], 'tools', 'PluginEdittraductionConfig', 'editraduction');
+    Html::header(__("Edit translation", "edittraduction"), $_SERVER['PHP_SELF'], 'tools', 'PluginEdittraductionConfig', 'editraduction');
 
-    echo "<table class='tab_cadre' cellpadding='5'><tr class='tab_bg_1'>";
-    echo "<tr><th>". __("Edit traduction", "edittraduction") ."</th></tr>\n";
+    if (!isset($_SESSION['edittraduction']['language'])) {
+        $_SESSION['edittraduction']['language'] = "en_GB";
+    } elseif (isset($_POST["update_choix_lang"])) {
+        $_SESSION['edittraduction']['language'] = $_POST["language"];
+    }
+
+    $lang = $_SESSION['edittraduction']['language'];
+    $directory = $edittraduction->getFile($lang);
+    $message = sprintf(__('You are not allowed to edit %1$s' , "edittraduction"), $_SESSION['edittraduction']['language']);
+    if (!is_writable($directory)){
+        echo "<div class='center notifs_setup warning' style='width:40%'>";
+        echo "<i class='fa fa-exclamation-triangle fa-5x'></i>";
+        echo "<p>$message</p>";
+        echo "<p>". __('Please contact your administrator to update file permissions' , "edittraduction") ."</p>";
+        echo "</div>";
+        echo "<br>";
+    }
+    
+    echo "<table style='width:30%' class='tab_cadre' cellpadding='5'><tr class='tab_bg_1'>";
+    echo "<tr><th class='center'>". __("Edit translation", "edittraduction") ."</th></tr>\n";
     echo "<tr class='tab_bg_1'><td class='center'>";
     
-    //var_dump($_SESSION);
     if (isset($_POST["update_choix_lang"])) {
         $_SESSION['edittraduction']['language'] = $_POST["language"]; 
         $edittraduction->ShowFormLanguage();
-        //$edittraduction->ShowFormSearch();
 
     }else{
         $edittraduction->ShowFormLanguage();
         
     }
 
+    
     if (isset($_POST["submitsave"])) {
-        //var_dump($_SESSION['edittraduction']['language']);
-        $lang = $_SESSION['edittraduction']['language'];
         $text = stripcslashes($_POST["textdata"]);
+        $lang = $_SESSION['edittraduction']['language'];
         $directory = $edittraduction->getFile($lang);
         if (is_writable($directory)){
             file_put_contents($directory, html_entity_decode($text));
@@ -43,7 +59,6 @@ if ($plugin->isActivated('edittraduction')) {
             Html::back();
             
         }else{
-            $message = sprintf(__('You don\'t have access denied to modify %1$s' , "edittraduction"), $_SESSION['edittraduction']['language']);
             Session::addMessageAfterRedirect(
                 $message,
                 true,

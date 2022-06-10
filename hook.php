@@ -37,20 +37,6 @@ function plugin_edittraduction_install() {
 
     //Execute the whole migration
     $migration->executeMigration();
-
-//Refaite avec la façon de dumpentity
-/*
-        //creation du premier accès nécessaire lors de l'installation du plugin
-        include_once(GLPI_ROOT."/plugins/edittraduction/inc/profile.class.php");
-        PluginEdittraductionProfile::createAdminAccess($_SESSION['glpiactiveprofile']['id']);
-        
-        foreach (PluginEdittraductionProfile::getRightsGeneral() as $right) {
-            PluginEdittraductionProfile::addDefaultProfileInfos($_SESSION['glpiactiveprofile']['id'],
-                                        [$right['field'] => $right['default']]);
-        }
-*/
-
-
     return true;
 }
 

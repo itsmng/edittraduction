@@ -16,37 +16,29 @@ msgstr ""
 
 #: front/edittraduction.form.php:15 setup.php:38
 #: inc/edittraduction.class.php:86 inc/config.class.php:8
-msgid "Edit traduction"
+msgid "Edit translation"
 msgstr "Modifier la traduction"
 
 #: front/edittraduction.form.php:37
 msgid "the treduction %1$s has been modified"
 msgstr "le %1$s de tréduction a été modifié"
 
-#: inc/edittraduction.class.php:86 front/edittraduction.form.php:46
-msgid "You don't have access denied to modify %1$s"
-msgstr "Vous n’avez pas d’accès  pour modifier %1$s"
+#: inc/edittraduction.class.php:86 front/edittraduction.form.php:30
+msgid "You are not allowed to edit %1$s"
+msgstr "Vous n’avez pas les droits pour modifier %1$s"
 
 #: front/edittraduction.form.php:66
 msgid "Enable your plugin"
 msgstr "Activez votre plugin"
 
-#: inc/profile.class.php:104
-msgid "Create"
-msgstr "Créer"
-
-#: inc/profile.class.php:105
-msgid "Read"
-msgstr "Lecture"
-
 #: inc/profile.class.php:106
-msgid "Update"
-msgstr "Modifier"
-
-#: inc/profile.class.php:108
-msgid "Delete permanently"
-msgstr "Supprimer définitivement"
+msgid "Allow editing"
+msgstr "Autoriser la modification"
 
 #: inc/profile.class.php:143
 msgid "General"
 msgstr "Général"
+
+#: front/edittraduction.form.php:35
+msgid "Please contact your administrator to update file permissions"
+msgstr "Veuillez contacter votre administrateur pour mettre à jour le fichier correctement"

@@ -5,7 +5,7 @@ class PluginEdittraductionConfig extends CommonDBTM {
     static $rightname = 'config';
 
     static function getTypeName($nb = 0) {
-        return __("Edit traduction", 'edittraduction');
+        return __("Edit translation", 'edittraduction');
     }
 
     static function getMenuContent() {
