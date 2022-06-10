@@ -17,13 +17,24 @@ if ($plugin->isActivated('edittraduction')) {
         $_SESSION['edittraduction']['language'] = $_POST["language"];
     }
 
+    $output = "";
+    foreach (Dropdown::getLanguages() as $key => $value) {
+        $result = $edittraduction->getFile($key);
+        if (!is_writable($result)){
+            $output = $output . "$key.po, ";
+        }
+    }
+    $output = substr($output, 0, -2);
+    $output = $output . ".";
+
     $lang = $_SESSION['edittraduction']['language'];
     $directory = $edittraduction->getFile($lang);
     $message = sprintf(__('You are not allowed to edit %1$s' , "edittraduction"), $_SESSION['edittraduction']['language']);
     if (!is_writable($directory)){
+        $list = sprintf(__('You are not allowed to edit %1$s' , "edittraduction"), $output);
         echo "<div class='center notifs_setup warning' style='width:40%'>";
         echo "<i class='fa fa-exclamation-triangle fa-5x'></i>";
-        echo "<p>$message</p>";
+        echo "<p>$list</p>";
         echo "<p>". __('Please contact your administrator to update file permissions' , "edittraduction") ."</p>";
         echo "</div>";
         echo "<br>";
