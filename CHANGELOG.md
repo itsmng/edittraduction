@@ -1,20 +1,6 @@
 # Change Log
 
-## v1.0.0
-
-This is the first release of Edit Traduction plugin!
-
-### Add
-
-+ New tab "Change translation" in Tools
-
-#### Change transalation
-
-+ Set your language
-+ Modify with your translations 
-
----
-## v1.0.1
+## v1.1
 
 Fix few things like wrong translations or button dosent appear.
 
@@ -32,5 +18,20 @@ Fix few things like wrong translations or button dosent appear.
 
 + useless code in commentary
 + read/create/purge plugin right 
+
+---
+
+## v1.0
+
+This is the first release of Edit Traduction plugin!
+
+### Add
+
++ New tab "Change translation" in Tools
+
+#### Change transalation
+
++ Set your language
++ Modify with your translations 
 
 ---

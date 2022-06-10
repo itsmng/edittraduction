@@ -36,7 +36,7 @@ function plugin_init_edittraduction() {
 */
 function plugin_version_edittraduction() {
 return array('name'           => __("Edit translation", "edittraduction"),
-                'version'        => '1.0.1',
+                'version'        => '1.1',
                 'author'         => 'ITSM Dev Team, Djily SARR',
                 'license'        => 'GPLv2+',
                 'homepage'       => '',
