@@ -76,14 +76,12 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
         
                 if ($canedit){
                     echo"<br><br>";      
-                    //$content .= Html::submit(_sx('button', 'Save'), ['name' => 'submitsave']);
-                    //echo"<input type='submit' name='submitsave' value='valider' class='submit'>";
                     echo"<input type='submit' name='submitsave' class='submit' value='Valider'>";
                     Html::closeForm();
                     
                 } 
             }else{
-                $message = sprintf(__('You don\'t have access denied to modify %1$s' , "edittraduction"), $_SESSION['edittraduction']['language']);
+                $message = sprintf(__('You are not allowed to edit %1$s' , "edittraduction"), $_SESSION['edittraduction']['language']);
                 Session::addMessageAfterRedirect(
                     $message,
                     true,
@@ -98,8 +96,7 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
 
     public function getFile($lang){
 
-        $locale_path = GLPI_ROOT . "/locales/" .$lang. ".po";
-
+        $locale_path = GLPI_ROOT . "/locales/$lang.po";
         return $locale_path;
     }
     
@@ -114,39 +111,4 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
                 
         return $result;
     }
-/*
-    function ShowFormSearch(){
-       
-        if (!Session::haveRight("plugin_edittraduction_edittraduction",UPDATE)) {
-            return false;
-        }
-
-        $canedit = Session::haveRight("plugin_edittraduction_edittraduction",UPDATE);
-        
-        if ($canedit){
-            echo "<form action='".$this->getFormURL()."' method='post'>";
-            echo "<p class='right'>";
-            echo "<input type='text' name='text_search'>";
-            //echo "<input type='submit' name='search_word' class='submit' value='Search' id='text_search'>";
-            echo " <button type='button' id='button2' onclick='StringSearch()'>Search</button>";
-            echo "</p>";
-
-            Html::closeForm();
-        }
-
-        $js = "function StringSearch() {
-            var SearchTerm = document.getElementById('text_search').value;
-            var TextSearch = document.getElementById('text_area').value;
-
-            if (SearchTerm.length > 0 && TextSearch.indexOf(SearchTerm) > -1) {
-                alert('String Found. Search Complete');
-            } else {
-                alert('No Data found in Text Area');
-            }
-        };";
-        return Html::scriptBlock($js);
-            
-    }
-*/
-    
 }

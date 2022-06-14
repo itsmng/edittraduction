@@ -22,7 +22,7 @@ function plugin_init_edittraduction() {
         Plugin::registerClass('PluginEdittraductionProfile', array('addtabon' => array('Profile')));
         Plugin::registerClass(PluginEdittraductionEdittraduction::class);
         
-        if (Session::haveRight("profile", UPDATE)) {
+        if (Session::haveRight("plugin_edittraduction_edittraduction",UPDATE)) {
             $PLUGIN_HOOKS['menu_toadd']['edittraduction'] = [
                 'tools' => array(PluginEdittraductionConfig::class)
             ];
@@ -35,8 +35,8 @@ function plugin_init_edittraduction() {
 * Get the name and the version of the plugin - Needed
 */
 function plugin_version_edittraduction() {
-return array('name'           => __("Edit traduction", "edittraduction"),
-                'version'        => '1.0.0',
+return array('name'           => __("Edit translation", "edittraduction"),
+                'version'        => '1.1',
                 'author'         => 'ITSM Dev Team, Djily SARR',
                 'license'        => 'GPLv2+',
                 'homepage'       => '',
