@@ -35,13 +35,14 @@ function plugin_init_edittraduction() {
 * Get the name and the version of the plugin - Needed
 */
 function plugin_version_edittraduction() {
-return array('name'           => __("Edit translation", "edittraduction"),
-                'version'        => '1.1',
-                'author'         => 'ITSM Dev Team, Djily SARR',
-                'license'        => 'GPLv2+',
-                'homepage'       => '',
-                'minGlpiVersion' => '9.5.7'
-              );
+    return array(
+        'name'           => __("Edit translation", "edittraduction"),
+        'version'        => '1.2',
+        'author'         => 'ITSM Dev Team, Djily SARR',
+        'license'        => 'GPLv2+',
+        'homepage'       => 'https://github.com/itsmng/edittraduction',
+        'minGlpiVersion' => '9.5.7'
+    );
 }
 
 
