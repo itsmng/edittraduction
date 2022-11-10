@@ -33,7 +33,7 @@ function plugin_edittraduction_install() {
                                         [$right['field'] => $right['default']]);
         }
 
-    }
+    } else $DB->queryOrDie("ALTER TABLE `glpi_plugin_edittraduction_profiles` ENGINE = InnoDB", $DB->error());
 
     //Execute the whole migration
     $migration->executeMigration();
