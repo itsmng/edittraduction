@@ -39,7 +39,7 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
             Dropdown::showLanguages("language", array('value' => $langValue));
             
             echo "<br>";echo "<br>";
-            echo "<input type='submit' name='update_choix_lang' class='submit' value='Valider' id='lang'>";
+            echo "<input type='submit' name='update_choix_lang' class='submit' value='".__("Edit")."' id='lang'>";
             echo "</p>";
 
             Html::closeForm();
@@ -76,7 +76,7 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
         
                 if ($canedit){
                     echo"<br><br>";      
-                    echo"<input type='submit' name='submitsave' class='submit' value='Valider'>";
+                    echo"<input type='submit' name='submitsave' class='submit' value='".__("Update")."'>";
                     Html::closeForm();
                     
                 } 
