@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.2
+
+Migrate MyISAM table to InnoDB
+
 ## v1.1
 
 Fix few things like wrong translations or button dosent appear.
