@@ -1,149 +1,196 @@
 <?php
-
+/**
+ * ---------------------------------------------------------------------
+ * ITSM-NG
+ * Copyright (C) 2022 ITSM-NG and contributors.
+ *
+ * https://www.itsm-ng.org
+ *
+ * based on GLPI - Gestionnaire Libre de Parc Informatique
+ * Copyright (C) 2003-2014 by the INDEPNET Development Team.
+ *
+ * ---------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of ITSM-NG.
+ *
+ * ITSM-NG is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ITSM-NG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ITSM-NG. If not, see <http://www.gnu.org/licenses/>.
+ * ---------------------------------------------------------------------
+ */
 
 class PluginEdittraductionProfile extends CommonDBTM {
-      
-   static function canCreate() {
+      	
+	/**
+	 * canCreate
+	 *
+	 * @return boolean
+	 */
+	static function canCreate() {
+		if (isset($_SESSION["profile"])) return ($_SESSION["profile"]['edittraduction'] == 'w');
+		return false;
+	}
+	
+	/**
+	 * canView
+	 *
+	 * @return boolean
+	 */
+	static function canView() {
+		if (isset($_SESSION["profile"])) return ($_SESSION["profile"]['edittraduction'] == 'w' || $_SESSION["profile"]['edittraduction'] == 'r');
+		return false;
+	}
+	
+	/**
+	 * createAdminAccess
+	 *
+	 * @param  int $ID
+	 * @return void
+	 */
+	static function createAdminAccess($ID) {
+		$myProf = new self();
+		if (!$myProf->getFromDB($ID)) $myProf->add(array('id' => $ID, 'right' => 'w'));
+	}
+	
+	/**
+	 * addDefaultProfileInfos
+	 *
+	 * @param  int $profiles_id
+	 * @param  array $rights
+	 * @return void
+	 */
+	static function addDefaultProfileInfos($profiles_id, $rights) {
+		$profileRight = new ProfileRight();
 
-      if (isset($_SESSION["profile"])) {
-        return ($_SESSION["profile"]['edittraduction'] == 'w');
-      }
-      return false;
-   }
+		foreach ($rights as $right => $value) {
+			if (!countElementsInTable('glpi_profilerights', ['profiles_id' => $profiles_id, 'name' => $right])) {
+				$myright['profiles_id'] = $profiles_id;
+				$myright['name']        = $right;
+				$myright['rights']      = $value;
 
-   static function canView() {
+				$profileRight->add($myright);
 
-      if (isset($_SESSION["profile"])) {
-        return ($_SESSION["profile"]['edittraduction'] == 'w'
-                || $_SESSION["profile"]['edittraduction'] == 'r');
-      }
-      return false;
-   }
+				$_SESSION['glpiactiveprofile'][$right] = $value;
+			}
+		}
+	}
+	
+	/**
+	 * changeProfile
+	 *
+	 * @return void
+	 */
+	static function changeProfile() {
+		$prof = new self();
 
-   static function createAdminAccess($ID) {
+		if ($prof->getFromDB($_SESSION['glpiactiveprofile']['id'])) {
+			$_SESSION["glpi_plugin_edittraduction_profile"] = $prof->fields;
+		} else {
+			unset($_SESSION["glpi_plugin_edittraduction_profile"]);
+		}
+	}
+	
+	/**
+	 * getTabNameForItem
+	 *
+	 * @param  object $item
+	 * @param  int $withtemplate
+	 * @return string
+	 */
+	function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
+		if (Session::haveRight("profile", UPDATE) && $item->getType() == 'Profile') {
+			return __('Translation editor', 'edittraduction');
+		}
 
-      $myProf = new self();
-    // si le profile n'existe pas déjà dans la table profile de mon plugin
-      if (!$myProf->getFromDB($ID)) {
-    // ajouter un champ dans la table comprenant l'ID du profil d la personne connecté et le droit d'écriture
-         $myProf->add(array('id' => $ID,
-                            'right'       => 'w'));
-      }
-   }
+		return '';
+	}
+	
+	/**
+	 * displayTabContentForItem
+	 *
+	 * @param  object $item
+	 * @param  int $tabnum
+	 * @param  int $withtemplate
+	 * @return boolean
+	 */
+	static function displayTabContentForItem(CommonGLPI $item, $tabnum=1, $withtemplate=0) {
+		if ($item->getType() == 'Profile') {
+			
+			$ID = $item->getID();
+			$prof = new self();
 
+			foreach (self::getRightsGeneral() as $right) {
+				self::addDefaultProfileInfos($ID, [$right['field'] => 0]);
+			}
 
-   /**
-    * addDefaultProfileInfos
-    * @param $profiles_id
-    * @param $rights
-   **/
-   static function addDefaultProfileInfos($profiles_id, $rights) {
-      $profileRight = new ProfileRight();
-      foreach ($rights as $right => $value) {
-         if (!countElementsInTable('glpi_profilerights',
-                                   ['profiles_id' => $profiles_id, 'name' => $right])) {
-            $myright['profiles_id'] = $profiles_id;
-            $myright['name']        = $right;
-            $myright['rights']      = $value;
-            $profileRight->add($myright);
-            //Add right to the current session
-            $_SESSION['glpiactiveprofile'][$right] = $value;
-         }
-      }
-   }
+			$prof->showForm($ID);
+		}
 
-   static function changeProfile() {
+		return true;
+	}
+	
+	/**
+	 * getRightsGeneral
+	 *
+	 * @return array
+	 */
+	static function getRightsGeneral() {
+		$rights = [
+			[
+				'itemtype'  => 'PluginEdittraductionProfile',
+				'label'     => __('Translation editor', 'edittraduction'),
+				'field'     => 'plugin_edittraduction_edittraduction',
+				'rights'    =>  [UPDATE => __('Allow editing', 'edittraduction')],
+				'default'   => 23
+			]
+		];
 
-      $prof = new self();
-      if ($prof->getFromDB($_SESSION['glpiactiveprofile']['id'])) {
-         $_SESSION["glpi_plugin_edittraduction_profile"] = $prof->fields;
-      } else {
-         unset($_SESSION["glpi_plugin_edittraduction_profile"]);
-      }
-   }
+		return $rights;
+	}
+	
+	/**
+	 * showForm
+	 *
+	 * @param  int $profiles_id
+	 * @param  boolean $openform
+	 * @param  boolean $closeform
+	 * @return void
+	 */
+	function showForm($profiles_id = 0, $openform = true, $closeform = true) {
 
+		if (!Session::haveRight("profile",READ)) return false;
+		
+		echo "<div class='firstbloc'>";
 
-   // Définition du nom de l'objet dans Profile du coeur
-   function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
-      
-      if (Session::haveRight("profile", UPDATE)) 
-      {
-         if ($item->getType() == 'Profile') {
-            return __('Edit translation', 'edittraduction');
-         }
-      }
-      return '';
-   }
+		if (($canedit = Session::haveRight('profile', UPDATE)) && $openform) {
+			$profile = new Profile();
+			echo "<form method='post' action='".$profile->getFormURL()."'>";
+		}
+		
+		$profile = new Profile();
+		$profile->getFromDB($profiles_id);
+		$rights = $this->getRightsGeneral();
+		$profile->displayRightsChoiceMatrix($rights, ['default_class' => 'tab_bg_2', 'title' => __('General')]);
 
-   // Définition du contenu de l'onglet 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum=1, $withtemplate=0) {
-        global $CFG_GLPI;
-
-        if ($item->getType() == 'Profile') {
-            
-            $ID = $item->getID();
-            $prof = new self();
-            
-            //In case there's no right for this profile, create it
-            foreach (self::getRightsGeneral() as $right) {
-               self::addDefaultProfileInfos($ID, [$right['field'] => 0]);
-            }
-
-            // j'affiche le formulaire
-            $prof->showForm($ID);
-        }
-        return true;
-   }
-
-   static function getRightsGeneral()
-   {
-      $rights = [
-          ['itemtype'  => 'PluginEdittraductionProfile',
-                'label'     => __('Edit translation', 'edittraduction'),
-                'field'     => 'plugin_edittraduction_edittraduction',
-                'rights'    =>  [UPDATE    => __('Allow editing', 'edittraduction')],
-                'default'   => 23]];
-      return $rights;
-   }
-
-
-      /**
-   * Show profile form
-   *
-   * @param $items_id integer id of the profile
-   * @param $target value url of target
-   *
-   * @return nothing
-   **/
-   function showForm($profiles_id = 0, $openform = true, $closeform = true) {
-      global $DB, $CFG_GLPI;
-      
-
-      if (!Session::haveRight("profile",READ)) {
-         return false;
-      }
-      
-      echo "<div class='firstbloc'>";
-      if (($canedit = Session::haveRight('profile', UPDATE))
-          && $openform) {
-         $profile = new Profile();
-        
-         echo "<form method='post' action='".$profile->getFormURL()."'>";
-      }
-    
-      $profile = new Profile();
-      $profile->getFromDB($profiles_id);
-      $rights = $this->getRightsGeneral();
-      $profile->displayRightsChoiceMatrix($rights, ['default_class' => 'tab_bg_2',
-                                                         'title'         => __('General')]);
-
-      if ($canedit && $closeform) {
-         echo "<div class='center'>";
-         echo Html::hidden('id', ['value' => $profiles_id]);
-         echo Html::submit(_sx('button', 'Save'), ['name' => 'update']);
-         echo "</div>\n";
-         Html::closeForm();
-      }
-      echo "</div>";
-   }
+		if ($canedit && $closeform) {
+			echo "<div class='center'>";
+			echo Html::hidden('id', ['value' => $profiles_id]);
+			echo Html::submit(_sx('button', 'Save'), ['name' => 'update']);
+			echo "</div>\n";
+			Html::closeForm();
+		}
+		
+		echo "</div>";
+	}
 }

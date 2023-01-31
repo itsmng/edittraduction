@@ -14,31 +14,35 @@ msgstr ""
 "X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Basepath: .\n"
 
-#: front/edittraduction.form.php:15 setup.php:38
-#: inc/edittraduction.class.php:86 inc/config.class.php:8
-msgid "Edit translation"
-msgstr "Modifier la traduction"
+#: setup.php:57
+#: front/edittraduction.form.php:42
+#: front/edittraduction.form.php:75
+#: inc/config.class.php:44
+#: inc/profile.class.php:113
+#: inc/profile.class.php:152
+msgid "Translation editor"
+msgstr "Éditeur de traduction"
 
-#: front/edittraduction.form.php:37
-msgid "the treduction %1$s has been modified"
-msgstr "le %1$s de tréduction a été modifié"
+#: front/edittraduction.form.php:95
+msgid "The %1$s translation has been modified with success"
+msgstr "La traduction %1$s a été modifiée avec succès"
 
-#: inc/edittraduction.class.php:86 front/edittraduction.form.php:30
-msgid "You are not allowed to edit %1$s"
-msgstr "Vous n’avez pas les droits pour modifier %1$s"
+#: front/edittraduction.form.php:98
+msgid "An error occurred while editing the %1$s translation, please contact your administrator"
+msgstr "Une erreur s'est produite lors de la modification de la traduction %1$s, veuillez contacter votre administrateur"
+
+#: inc/edittraduction.class.php:122
+msgid "The %1$s translation file is not writable. Please contact your administrator to update file permissions"
+msgstr "Le fichier de traduction %1$s n'est pas accessible en écriture. Veuillez contacter votre administrateur pour mettre à jour les droits sur les fichiers de traduction"
 
 #: front/edittraduction.form.php:66
-msgid "Enable your plugin"
-msgstr "Activez votre plugin"
+msgid "Translation files are not writable. Please contact your administrator to update file permissions"
+msgstr "Les fichiers de traduction ne sont pas accessible en écriture. Veuillez contacter votre administrateur pour mettre à jour les droits sur les fichiers de traduction"
 
-#: inc/profile.class.php:106
+#: front/edittraduction.form.php:66
+msgid "The plugin is not activated"
+msgstr "Le plugin n'est pas activé"
+
+#: inc/profile.class.php:154
 msgid "Allow editing"
-msgstr "Autoriser la modification"
-
-#: inc/profile.class.php:143
-msgid "General"
-msgstr "Général"
-
-#: front/edittraduction.form.php:35
-msgid "Please contact your administrator to update file permissions"
-msgstr "Veuillez contacter votre administrateur pour mettre à jour le fichier correctement"
+msgstr "Autoriser l'édition"

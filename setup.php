@@ -1,43 +1,61 @@
 <?php
-
+/**
+ * ---------------------------------------------------------------------
+ * ITSM-NG
+ * Copyright (C) 2022 ITSM-NG and contributors.
+ *
+ * https://www.itsm-ng.org
+ *
+ * based on GLPI - Gestionnaire Libre de Parc Informatique
+ * Copyright (C) 2003-2014 by the INDEPNET Development Team.
+ *
+ * ---------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of ITSM-NG.
+ *
+ * ITSM-NG is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ITSM-NG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ITSM-NG. If not, see <http://www.gnu.org/licenses/>.
+ * ---------------------------------------------------------------------
+ */
 
 /**
- * Init the hooks of the plugin - Needed
+ * Init the hooks of the plugin
  * 
  * @return void
  */
 function plugin_init_edittraduction() {
-        // déclarer les variables globales dont on a besoin 
-        global $PLUGIN_HOOKS;
+	global $PLUGIN_HOOKS;
 
-        //required!
-        //Un plugin CSRF_COMPLIANT est un plugin qui contient des formulaires fermés avec Html::closeForm() et qui ne passe aucune variable de type GET
-        $PLUGIN_HOOKS['csrf_compliant']['edittraduction'] = true;
-        // Fonction pour changer mon profil
-        $PLUGIN_HOOKS['change_profile']['edittraduction'] = array('PluginEdittraductionProfile','changeProfile');
-        
-        //$PLUGIN_HOOKS['add_javascript']['edittraduction'] = 'edittraduction.js';
-        
-        // Gérer les droits dans les profils du coeur 
-        Plugin::registerClass('PluginEdittraductionProfile', array('addtabon' => array('Profile')));
-        Plugin::registerClass(PluginEdittraductionEdittraduction::class);
-        
-        if (Session::haveRight("plugin_edittraduction_edittraduction",UPDATE)) {
-            $PLUGIN_HOOKS['menu_toadd']['edittraduction'] = [
-                'tools' => array(PluginEdittraductionConfig::class)
-            ];
-        }
-
+	$PLUGIN_HOOKS['csrf_compliant']['edittraduction'] = true;
+	$PLUGIN_HOOKS['change_profile']['edittraduction'] = array('PluginEdittraductionProfile','changeProfile');
+	
+	Plugin::registerClass('PluginEdittraductionProfile', array('addtabon' => array('Profile')));
+	Plugin::registerClass(PluginEdittraductionEdittraduction::class);
+	
+	if (Session::haveRight("plugin_edittraduction_edittraduction", UPDATE)) {
+		$PLUGIN_HOOKS['menu_toadd']['edittraduction'] = ['tools' => array(PluginEdittraductionConfig::class)];
+	}
 }
 
-
 /**
-* Get the name and the version of the plugin - Needed
+* Get the name and the version of the plugin
 */
 function plugin_version_edittraduction() {
     return array(
-        'name'           => __("Edit translation", "edittraduction"),
-        'version'        => '1.2',
+        'name'           => __("Translation editor", "edittraduction"),
+        'version'        => '1.3',
         'author'         => 'ITSM Dev Team, Djily SARR',
         'license'        => 'GPLv2+',
         'homepage'       => 'https://github.com/itsmng/edittraduction',
@@ -45,26 +63,20 @@ function plugin_version_edittraduction() {
     );
 }
 
-
-
-
 /**
- * Check if the prerequisites of the plugin are satisfied - Needed
+ * Check if the prerequisites of the plugin are satisfied
  */
 function plugin_edittraduction_check_prerequisites() {
- 
-    // Check that the GLPI version is compatible
-    if (version_compare(GLPI_VERSION, '9.5.7', 'lt')) {
-        echo "This plugin Requires GLPI >= 9.5.7";
+    if (version_compare(ITSM_VERSION, '1.0', 'lt')) {
+        echo "This plugin requires ITSM >= 1.0";
         return false;
     }
  
     return true;
 }
 
-
 /**
- *  Check if the config is ok - Needed
+ *  Check if the config is ok
  */
 function plugin_edittraduction_check_config() {
     return true;
