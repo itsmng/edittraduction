@@ -1,12 +1,16 @@
 # Change Log
 
+## v1.3
+
++ Update plugin translations
+
 ## v1.2
 
-Migrate MyISAM table to InnoDB
++ Migrate MyISAM table to InnoDB
 
 ## v1.1
 
-Fix few things like wrong translations or button dosent appear.
++ Fix few things like wrong translations or button dosent appear.
 
 ### Add
 
