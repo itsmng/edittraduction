@@ -1,6 +1,6 @@
 # ITSM Edittraduction
 
-This plugin allows you to edit traduction file directly in the web interface.
+This plugin allows you to edit translation file directly in the web interface.
 
 ## Installation
 
@@ -8,9 +8,11 @@ Installing this plugin is done following the standard process for itsm plugins, 
 
 Don't forget to set Apache rights, and enjoy !
 
+`Note: To use this plugin, you should install gettext library.`
+
 ## Usage
 
-Go to `Tools > Edit translation`.
+Go to `Tools > Translation editor`.
 
 Select the language you want to change and click on `Edit`.
 
