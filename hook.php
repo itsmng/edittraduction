@@ -38,6 +38,12 @@
 function plugin_edittraduction_install() {
     global $DB;
 
+    $msgfmtexist = shell_exec("which msgfmt");
+    if (empty($msgfmtexist)) {
+        Session::addMessageAfterRedirect(__('<p><b>Error</b></p><p><i>Make sure msgfmt is installed !</i></p>', 'edittraduction'));
+        return false;
+    }
+
     $migration = new Migration(100);
 
     if (!$DB->tableExists("glpi_plugin_edittraduction_profiles")) {  

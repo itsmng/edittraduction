@@ -80,6 +80,8 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
             
             echo "<br>";echo "<br>";
             echo "<input type='submit' name='update_choix_lang' class='submit' value='".__("Edit")."' id='lang'>";
+            echo "<br/><br/>";
+            echo "<input type='submit' name='PreUpload' class='submit' value='".__("Update")."' id='lang'>";
             echo "</p>";
 
             Html::closeForm();
@@ -97,25 +99,42 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
 
         $canedit = Session::haveRight("plugin_edittraduction_edittraduction",UPDATE);
         
-        if(isset($_POST['update_choix_lang'])) {
-            $lang = $_POST["language"];
+        if(isset($_POST['update_choix_lang']) || isset($_POST['submitsave'])) {
+            if (isset($_POST["language"])) {
+                $lang = $_POST["language"];
+            }else {
+                $lang = $_SESSION['edittraduction']["language"];
+            }
             $path = $this->getFile($lang);
+            $init = [];
             
             if(is_readable($path) && ($ressource = fopen($path, 'r+b'))) {
                 echo "<form action='".$this->getFormURL()."' method='post'>";
-                echo "<textarea rows = '40' cols = '160' name='textdata' id='text_area'>";
+                $i = 1;
                         
                 while(!feof($ressource)) {
                     $ligne = fgets($ressource);
-                    echo $ligne;
-                }           
+                    if (strncmp($ligne, "msgstr ", 7) === 0) {
+                        if (preg_match("/\"(.*?)\"/", $ligne, $matches)) {
+                            if ($matches[1] != "") {
+                                $init[$i] = $matches[1];
+                            }
+                        }
+                    }
+                    $i++;
+                }
+
+                $_SESSION['edittraduction']['init'] = $init;
 
                 fclose($ressource);
-                echo"</textarea>";
         
                 if ($canedit) {
+                    Dropdown::showFromArray('msg', $init, []);
+                    echo "<input type='text' name='new' class='input'>";
                     echo"<br><br>";      
                     echo"<input type='submit' name='submitsave' class='submit' value='".__("Update")."'>";
+                    echo "<br/><br/>";
+                    echo"<input type='submit' name='backsave' class='submit' value='".__("Back")."'>";
                     Html::closeForm();  
                 } 
             } else {
@@ -123,6 +142,43 @@ class PluginEdittraductionEdittraduction extends CommonDBTM {
                 Session::addMessageAfterRedirect($message, true, ERROR);
                 Html::back();
             } 
+        }
+    }
+
+    public function showBeforeUpdate(){
+        if (is_numeric($_POST['PreUpload'])) {
+            unset($_SESSION['edittraduction']['changes'][$_POST['PreUpload']]);
+        }
+        echo "<form action='".$this->getFormURL()."' method='post'>";
+        if (isset($_SESSION['edittraduction']['changes']) && !empty($_SESSION['edittraduction']['changes'])) {
+
+            echo "<table class='tab_cadre'>";
+            echo "<tr>";
+            echo "<th>" . __("Origin", 'edittraduction') . "</th>";
+            echo "<th>" . __("New value", 'edittraduction') . "</th>";
+            echo "<th>" . __("Action", 'edittraduction') . "</th>";
+            echo "</tr>";
+
+            foreach ($_SESSION['edittraduction']['changes'] as $key => $value) {
+                echo "<tr>";
+                echo "<td>" . $_SESSION['edittraduction']['init'][$key] . "</td>";
+                echo "<td>" . $value . "</td>";
+                echo "<td>" . "<button type='submit' name='PreUpload' class='vsubmit' value='".$key."'>"."<i class='fa fa-times'"."</button>" . "</td>";
+                echo "</tr>";
+            }
+
+            echo "</table>";
+            echo "<br/><br/>";
+            echo"<input type='submit' name='uploadSave' class='submit' value='".__("Update")."'>";
+            echo "<br/><br/>";
+            echo"<input type='submit' name='backsave' class='submit' value='".__("Back")."'>";
+            Html::closeForm();  
+        } else {
+            echo __('No data to update', 'edittraduction');
+            echo "<br/><br/>";
+            echo"<input type='submit' name='backsave' class='submit' value='".__("Back")."'>";
+            Html::closeForm();  
+
         }
     }
     

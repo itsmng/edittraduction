@@ -56,7 +56,7 @@ function plugin_version_edittraduction() {
     return array(
         'name'           => __("Translation editor", "edittraduction"),
         'version'        => '1.3',
-        'author'         => 'ITSM Dev Team, Djily SARR',
+        'author'         => 'ITSM Dev Team, Djily SARR, Rudy LAURENT',
         'license'        => 'GPLv2+',
         'homepage'       => 'https://github.com/itsmng/edittraduction',
         'minGlpiVersion' => '9.5.7'
