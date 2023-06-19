@@ -72,15 +72,45 @@ if ($plugin->isActivated('edittraduction')) {
     echo "<tr><th class='center'>". __("Translation editor", "edittraduction") ."</th></tr>\n";
     echo "<tr class='tab_bg_1'><td class='center'>";
     
-    if (isset($_POST["update_choix_lang"])) {
-        $_SESSION['edittraduction']['language'] = $_POST["language"]; 
-        $edittraduction->ShowFormLanguage();
-    } else {
-        $edittraduction->ShowFormLanguage();  
+    if (!isset($_POST['update_choix_lang']) && !isset($_POST['PreUpload']) && !isset($_POST['submitsave'])) {
+        if (isset($_POST["update_choix_lang"])) {
+            $_SESSION['edittraduction']['language'] = $_POST["language"]; 
+            $edittraduction->ShowFormLanguage();
+        } else {
+            $edittraduction->ShowFormLanguage();  
+        }
     }
 
     if (isset($_POST["submitsave"])) {
-        $text = stripcslashes($_POST["textdata"]);
+        $_SESSION['edittraduction']['changes'][$_POST["msg"]] = $_POST["new"];
+        $message = sprintf(__('The %1$s translation has been modified with success', 'edittraduction'), $_SESSION['edittraduction']['language']);
+        Session::addMessageAfterRedirect($message, true, INFO);
+    }
+
+    if (isset($_POST["backsave"])) {
+        Html::back();
+    }
+
+    if (isset($_POST["PreUpload"])) {
+        $edittraduction->showBeforeUpdate();
+    }
+
+    if (isset($_POST["uploadSave"])) {
+        $lang = $_SESSION['edittraduction']['language'];
+        $path = GLPI_ROOT . "/locales/$lang.po";
+        $text = "";
+        if(is_readable($path) && ($ressource = fopen($path, 'r+b'))) {
+            $i = 1;
+                    
+            while(!feof($ressource)) {
+                $ligne = fgets($ressource);
+                if (array_key_exists($i, $_SESSION['edittraduction']['changes'])) {
+                    $ligne = preg_replace("/\"[^()]*\"/", "\"" . $_SESSION['edittraduction']['changes'][$i] . "\"", $ligne);
+                }
+                $text .= $ligne;
+                $i++;
+            }
+        }
         $lang = $_SESSION['edittraduction']['language'];
         $directory = $edittraduction->getFile($lang);
 
@@ -88,13 +118,8 @@ if ($plugin->isActivated('edittraduction')) {
             file_put_contents($directory, html_entity_decode($text));
             $result = $edittraduction->upadteMoFile($directory);
 
-			if($result != "") {
-				$message = sprintf(__('The %1$s translation has been modified with success', 'edittraduction'), $_SESSION['edittraduction']['language']);
-				Session::addMessageAfterRedirect($message, true, INFO);
-			} else {
-				$message = sprintf(__('An error occurred while editing the %1$s translation, please contact your administrator', 'edittraduction'), $_SESSION['edittraduction']['language']);
-            	Session::addMessageAfterRedirect($message, true, ERROR);
-			}
+            $message = sprintf(__('The %1$s translation has been modified with success', 'edittraduction'), $_SESSION['edittraduction']['language']);
+            Session::addMessageAfterRedirect($message, true, INFO);
             
             Html::back();
         } else {
