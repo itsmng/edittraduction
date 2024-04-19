@@ -35,6 +35,22 @@ msgstr "Une erreur s'est produite lors de la modification de la traduction %1$s,
 msgid "The %1$s translation file is not writable. Please contact your administrator to update file permissions"
 msgstr "Le fichier de traduction %1$s n'est pas accessible en écriture. Veuillez contacter votre administrateur pour mettre à jour les droits sur les fichiers de traduction"
 
+#: inc/edittraduction.class.php:150
+msgid "Origin"
+msgstr "Origine"
+
+#: inc/edittraduction.class.php:151
+msgid "New value"
+msgstr "Nouvelle valeur"
+
+#: inc/edittraduction.class.php:152
+msgid "Action"
+msgstr "Action"
+
+#: inc/edittraduction.class.php:177
+msgid "No data to update"
+msgstr "Aucune donnée à mettre à jour"
+
 #: front/edittraduction.form.php:66
 msgid "Translation files are not writable. Please contact your administrator to update file permissions"
 msgstr "Les fichiers de traduction ne sont pas accessible en écriture. Veuillez contacter votre administrateur pour mettre à jour les droits sur les fichiers de traduction"
