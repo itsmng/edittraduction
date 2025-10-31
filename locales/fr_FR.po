@@ -62,3 +62,87 @@ msgstr "Le plugin n'est pas activé"
 #: inc/profile.class.php:154
 msgid "Allow editing"
 msgstr "Autoriser l'édition"
+
+#: front/edittraduction.form.php:95
+msgid "Pending change removed"
+msgstr "Modification en attente supprimée"
+
+#: front/edittraduction.form.php:105
+msgid "All pending changes cleared"
+msgstr "Toutes les modifications en attente ont été supprimées"
+
+#: front/edittraduction.form.php:177
+msgid "Pending change"
+msgstr "Modification en attente"
+
+#: front/edittraduction.form.php:178
+msgid "No translations match your search"
+msgstr "Aucune traduction ne correspond à votre recherche"
+
+#: front/edittraduction.form.php:182 front/edittraduction.form.php:317
+msgid "Context"
+msgstr "Contexte"
+
+#: front/edittraduction.form.php:210
+msgid "Select language"
+msgstr "Sélectionner une langue"
+
+#: front/edittraduction.form.php:215
+msgid "Language"
+msgstr "Langue"
+
+#: front/edittraduction.form.php:232
+msgid "Switch"
+msgstr "Changer"
+
+#: front/edittraduction.form.php:242
+msgid "Search translations"
+msgstr "Rechercher des traductions"
+
+#: front/edittraduction.form.php:246
+msgid "Search…"
+msgstr "Rechercher…"
+
+#: front/edittraduction.form.php:253
+msgid "Editor"
+msgstr "Éditeur"
+
+#: front/edittraduction.form.php:256
+msgid "List view"
+msgstr "Vue liste"
+
+#: front/edittraduction.form.php:268
+msgid "Translation"
+msgstr "Traduction"
+
+#: front/edittraduction.form.php:274
+msgid "Original text"
+msgstr "Texte d'origine"
+
+#: front/edittraduction.form.php:280
+msgid "Stage change"
+msgstr "Mettre en attente"
+
+#: front/edittraduction.form.php:297
+msgid "Pending changes"
+msgstr "Modifications en attente"
+
+#: front/edittraduction.form.php:333
+msgid "Remove pending change"
+msgstr "Supprimer la modification en attente"
+
+#: front/edittraduction.form.php:340
+msgid "Remove"
+msgstr "Supprimer"
+
+#: front/edittraduction.form.php:355
+msgid "Apply changes"
+msgstr "Appliquer les modifications"
+
+#: front/edittraduction.form.php:361
+msgid "Discard all"
+msgstr "Tout annuler"
+
+#: front/edittraduction.form.php:367
+msgid "No pending changes"
+msgstr "Aucune modification en attente"

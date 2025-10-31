@@ -32,21 +32,27 @@
 
 /**
  * Install hook
- * 
+ *
  * @return boolean
  */
-function plugin_edittraduction_install() {
+function plugin_edittraduction_install()
+{
     global $DB;
 
-    $msgfmtexist = shell_exec("which msgfmt");
-    if (empty($msgfmtexist)) {
-        Session::addMessageAfterRedirect(__('<p><b>Error</b></p><p><i>Make sure msgfmt is installed !</i></p>', 'edittraduction'));
+    // Check if gettext library is available
+    if (!class_exists("Gettext\\Generator\\MoGenerator")) {
+        Session::addMessageAfterRedirect(
+            __(
+                "<p><b>Error</b></p><p><i>Gettext library not found. Please run composer install in the plugin directory.</i></p>",
+                "edittraduction",
+            ),
+        );
         return false;
     }
 
     $migration = new Migration(100);
 
-    if (!$DB->tableExists("glpi_plugin_edittraduction_profiles")) {  
+    if (!$DB->tableExists("glpi_plugin_edittraduction_profiles")) {
         $query2 = "CREATE TABLE `glpi_plugin_edittraduction_profiles` (
 			`id` int(11) NOT NULL default '0',
 			`right` char(1) collate utf8_unicode_ci default NULL,
@@ -55,14 +61,24 @@ function plugin_edittraduction_install() {
 
         $DB->queryOrDie($query2, $DB->error());
 
-        include_once(GLPI_ROOT."/plugins/edittraduction/inc/profile.class.php");
-        PluginEdittraductionProfile::createAdminAccess($_SESSION['glpiactiveprofile']['id']);
-        
-        foreach (PluginEdittraductionProfile::getRightsGeneral() as $right) {
-            PluginEdittraductionProfile::addDefaultProfileInfos($_SESSION['glpiactiveprofile']['id'], [$right['field'] => $right['default']]);
-        }
+        include_once GLPI_ROOT .
+            "/plugins/edittraduction/inc/profile.class.php";
+        PluginEdittraductionProfile::createAdminAccess(
+            $_SESSION["glpiactiveprofile"]["id"],
+        );
 
-    } else $DB->queryOrDie("ALTER TABLE `glpi_plugin_edittraduction_profiles` ENGINE = InnoDB", $DB->error());
+        foreach (PluginEdittraductionProfile::getRightsGeneral() as $right) {
+            PluginEdittraductionProfile::addDefaultProfileInfos(
+                $_SESSION["glpiactiveprofile"]["id"],
+                [$right["field"] => $right["default"]],
+            );
+        }
+    } else {
+        $DB->queryOrDie(
+            "ALTER TABLE `glpi_plugin_edittraduction_profiles` ENGINE = InnoDB",
+            $DB->error(),
+        );
+    }
 
     $migration->executeMigration();
     return true;
@@ -70,21 +86,29 @@ function plugin_edittraduction_install() {
 
 /**
  * Uninstall hook
- * 
+ *
  * @return boolean
  */
-function plugin_edittraduction_uninstall() {
+function plugin_edittraduction_uninstall()
+{
     global $DB;
 
-	$tablename = 'glpi_plugin_edittraduction_profiles';
-	
-	if($DB->tableExists($tablename)) $DB->queryOrDie("DROP TABLE `$tablename`", $DB->error());
-    
-    foreach (PluginEdittraductionProfile::getRightsGeneral() as $right) {
-		$query = "DELETE FROM `glpi_profilerights` WHERE `name` = '".$right['field']."'";
-		$DB->query($query);
+    $tablename = "glpi_plugin_edittraduction_profiles";
 
-		if (isset($_SESSION['glpiactiveprofile'][$right['field']])) unset($_SESSION['glpiactiveprofile'][$right['field']]);
+    if ($DB->tableExists($tablename)) {
+        $DB->queryOrDie("DROP TABLE `$tablename`", $DB->error());
+    }
+
+    foreach (PluginEdittraductionProfile::getRightsGeneral() as $right) {
+        $query =
+            "DELETE FROM `glpi_profilerights` WHERE `name` = '" .
+            $right["field"] .
+            "'";
+        $DB->query($query);
+
+        if (isset($_SESSION["glpiactiveprofile"][$right["field"]])) {
+            unset($_SESSION["glpiactiveprofile"][$right["field"]]);
+        }
     }
 
     return true;
