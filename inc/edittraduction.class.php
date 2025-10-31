@@ -213,7 +213,7 @@ class PluginEdittraductionEdittraduction extends CommonDBTM
         if (!is_writable($path)) {
             throw new RuntimeException(
                 sprintf(
-                    __("The %1$s translation file is not writable", "edittraduction"),
+                    __("The %1\$s translation file is not writable", "edittraduction"),
                     $language
                 )
             );
@@ -231,7 +231,16 @@ class PluginEdittraductionEdittraduction extends CommonDBTM
         }
 
         $poGenerator = new PoGenerator();
-        $poGenerator->generateFile($translations, $path);
+        $poContents = $poGenerator->generateString($translations);
+
+        if (file_put_contents($path, $poContents, LOCK_EX) === false) {
+            throw new RuntimeException(
+                sprintf(
+                    __("Failed to write %1\$s translation file", "edittraduction"),
+                    $language
+                )
+            );
+        }
 
         $this->updateMoFile($path);
 
@@ -251,7 +260,16 @@ class PluginEdittraductionEdittraduction extends CommonDBTM
 
             $moFile = substr($path, 0, -3) . ".mo";
             $moGenerator = new MoGenerator();
-            $moGenerator->generateFile($translations, $moFile);
+            $moContents = $moGenerator->generateString($translations);
+
+            if (file_put_contents($moFile, $moContents, LOCK_EX) === false) {
+                throw new RuntimeException(
+                    sprintf(
+                        __("Failed to write compiled translation file %1\$s", "edittraduction"),
+                        basename($moFile)
+                    )
+                );
+            }
 
             $translation_cache = Config::getCache("cache_trans");
             $translation_cache->clear();
