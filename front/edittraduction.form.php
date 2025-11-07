@@ -228,7 +228,7 @@ if ($plugin->isActivated("edittraduction")) {
     echo "</select>";
     echo "</div>";
     echo "<div class='et-actions'>";
-    echo "<button type='submit' class='btn btn-secondary'>" .
+    echo "<button type='submit' class='et-btn et-btn--secondary'>" .
         __("Switch", "edittraduction") .
         "</button>";
     echo "</div>";
@@ -276,7 +276,7 @@ if ($plugin->isActivated("edittraduction")) {
     echo "<textarea id='et-original-field' class='et-textarea' readonly></textarea>";
     echo "</div>";
     echo "<div class='et-actions'>";
-    echo "<button type='submit' class='btn btn-primary'>" .
+    echo "<button type='submit' class='et-btn et-btn--primary'>" .
         __("Stage change", "edittraduction") .
         "</button>";
     echo "</div>";
@@ -351,13 +351,13 @@ if ($plugin->isActivated("edittraduction")) {
         echo "<div class='et-staged-actions'>";
         echo "<form method='post'>";
         echo "<input type='hidden' name='action' value='commit-changes'>";
-        echo "<button type='submit' class='btn btn-success'>" .
+        echo "<button type='submit' class='et-btn et-btn--success'>" .
             __("Apply changes", "edittraduction") .
             "</button>";
         Html::closeForm();
         echo "<form method='post'>";
         echo "<input type='hidden' name='action' value='discard-all'>";
-        echo "<button type='submit' class='btn btn-outline-secondary'>" .
+        echo "<button type='submit' class='et-btn et-btn--outline-secondary'>" .
             __("Discard all", "edittraduction") .
             "</button>";
         Html::closeForm();
