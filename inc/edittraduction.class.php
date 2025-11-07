@@ -30,183 +30,324 @@
  * ---------------------------------------------------------------------
  */
 
-include_once (GLPI_ROOT . "/inc/based_config.php");
-include_once (GLPI_CONFIG_DIR . "/config_db.php");
+include_once GLPI_ROOT . "/inc/based_config.php";
+include_once GLPI_CONFIG_DIR . "/config_db.php";
 
-class PluginEdittraductionEdittraduction extends CommonDBTM {
+use Gettext\Generator\MoGenerator;
+use Gettext\Generator\PoGenerator;
+use Gettext\Loader\PoLoader;
 
-    static $rightname = 'plugin_edittraduction_edittraduction';
-        
-    /**
-     * canCreate
-     *
-     * @return boolean
-     */
-    static function canCreate() {
-        return Session::haveRight('plugin_edittraduction_edittraduction', CREATE);
+class PluginEdittraductionEdittraduction extends CommonDBTM
+{
+    static $rightname = "plugin_edittraduction_edittraduction";
+
+    private const SESSION_NAMESPACE = "edittraduction";
+    private const SESSION_LANGUAGE = "language";
+    private const SESSION_CHANGES = "changes";
+    private const SESSION_INDEX = "index";
+    private const SESSION_ACTIVE = "active_entry";
+
+    public static function canCreate()
+    {
+        return Session::haveRight(self::$rightname, CREATE);
     }
-    
-    /**
-     * canView
-     *
-     * @return boolean
-     */
-    static function canView() {
-        return Session::haveRight('plugin_edittraduction_edittraduction', READ);
+
+    public static function canView()
+    {
+        return Session::haveRight(self::$rightname, READ);
     }
-    
-    /**
-     * ShowFormLanguage
-     *
-     * @return void
-     */
-    function ShowFormLanguage(){
-       
-        if (!Session::haveRight("plugin_edittraduction_edittraduction",UPDATE)) return false;
 
-        $canedit = Session::haveRight("plugin_edittraduction_edittraduction",UPDATE);
-
-        if (isset($_SESSION['edittraduction']['language'])) {
-            $langValue = $_SESSION['edittraduction']['language'];
-        } else {
-            $langValue = "en_GB";
+    public function getSelectedLanguage(): string
+    {
+        $this->normaliseSession();
+        if (!isset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_LANGUAGE])) {
+            $_SESSION[self::SESSION_NAMESPACE][self::SESSION_LANGUAGE] = "en_GB";
         }
-        
-        if ($canedit) {
-            echo "<form action=".$this->getFormURL()." method='post' name='choixlang'>";
-            echo "<p class='center'>";
 
-            Dropdown::showLanguages("language", array('value' => $langValue));
-            
-            echo "<br>";echo "<br>";
-            echo "<input type='submit' name='update_choix_lang' class='submit' value='".__("Edit")."' id='lang'>";
-            echo "<br/><br/>";
-            echo "<input type='submit' name='PreUpload' class='submit' value='".__("Update")."' id='lang'>";
-            echo "</p>";
-
-            Html::closeForm();
-        }
+        return $_SESSION[self::SESSION_NAMESPACE][self::SESSION_LANGUAGE];
     }
-        
-    /**
-     * showFile
-     *
-     * @return void
-     */
-    function showFile() {
 
-        if (!Session::haveRight("plugin_edittraduction_edittraduction",UPDATE)) return false;
+    public function setSelectedLanguage(string $language): void
+    {
+        $this->normaliseSession();
+        $_SESSION[self::SESSION_NAMESPACE][self::SESSION_LANGUAGE] = $language;
+        unset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_ACTIVE]);
+    }
 
-        $canedit = Session::haveRight("plugin_edittraduction_edittraduction",UPDATE);
-        
-        if(isset($_POST['update_choix_lang']) || isset($_POST['submitsave'])) {
-            if (isset($_POST["language"])) {
-                $lang = $_POST["language"];
-            }else {
-                $lang = $_SESSION['edittraduction']["language"];
+    public function getTranslations(string $language): array
+    {
+        $this->normaliseSession();
+        $path = $this->getFile($language);
+        $poLoader = new PoLoader();
+        $translations = $poLoader->loadFile($path);
+
+        $items = [];
+        $index = [];
+
+        foreach ($translations as $translation) {
+            if ($translation->getOriginal() === "") {
+                continue;
             }
-            $path = $this->getFile($lang);
-            $init = [];
-            
-            if(is_readable($path) && ($ressource = fopen($path, 'r+b'))) {
-                echo "<form action='".$this->getFormURL()."' method='post'>";
-                $i = 1;
-                        
-                while(!feof($ressource)) {
-                    $ligne = fgets($ressource);
-                    if (strncmp($ligne, "msgstr ", 7) === 0) {
-                        if (preg_match("/\"(.*?)\"/", $ligne, $matches)) {
-                            if ($matches[1] != "") {
-                                $init[$i] = $matches[1];
-                            }
-                        }
-                    }
-                    $i++;
-                }
 
-                $_SESSION['edittraduction']['init'] = $init;
+            $entryId = $this->buildEntryId($translation);
+            $item = [
+                "id" => $entryId,
+                "original" => $translation->getOriginal(),
+                "translation" => (string) $translation->getTranslation(),
+                "context" => $translation->getContext() ?? "",
+                "plural" => $translation->getPlural() ?? "",
+                "plural_translations" => $translation->getPluralTranslations(),
+            ];
 
-                fclose($ressource);
-        
-                if ($canedit) {
-                    Dropdown::showFromArray('msg', $init, []);
-                    echo "<input type='text' name='new' class='input'>";
-                    echo"<br><br>";      
-                    echo"<input type='submit' name='submitsave' class='submit' value='".__("Update")."'>";
-                    echo "<br/><br/>";
-                    echo"<input type='submit' name='backsave' class='submit' value='".__("Back")."'>";
-                    Html::closeForm();  
-                } 
+            $items[] = $item;
+            $index[$entryId] = [
+                "context" => $item["context"],
+                "original" => $item["original"],
+                "plural" => $item["plural"],
+                "translation" => $item["translation"],
+            ];
+        }
+
+        $_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX][$language] = $index;
+
+        return $items;
+    }
+
+    public function getEntryMetadata(string $language, string $entryId): ?array
+    {
+        $this->normaliseSession();
+        $this->ensureIndex($language);
+
+        if (!isset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX][$language][$entryId])) {
+            return null;
+        }
+
+        return $_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX][$language][$entryId];
+    }
+
+    public function stageChange(string $language, string $entryId, string $newValue): void
+    {
+        $this->normaliseSession();
+        $this->ensureIndex($language);
+
+        $metadata = $this->getEntryMetadata($language, $entryId);
+        if ($metadata === null) {
+            throw new InvalidArgumentException("Unknown translation entry");
+        }
+
+        $newValue = Html::cleanPostForTextArea($newValue);
+        $newValue = is_string($newValue) ? trim($newValue) : "";
+
+        $changes =& $_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES][$language];
+        if (!isset($changes)) {
+            $changes = [];
+        }
+
+        if ($newValue === $metadata["translation"]) {
+            unset($changes[$entryId]);
+            $this->setActiveEntry($entryId);
+            return;
+        }
+
+        $changes[$entryId] = [
+            "context" => $metadata["context"],
+            "original" => $metadata["original"],
+            "plural" => $metadata["plural"],
+            "previous" => $metadata["translation"],
+            "updated" => $newValue,
+        ];
+
+        $_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX][$language][$entryId]["translation"] = $newValue;
+        $this->setActiveEntry($entryId);
+    }
+
+    public function discardChange(string $language, string $entryId): void
+    {
+        $this->normaliseSession();
+        $changes =& $_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES][$language];
+        if (isset($changes[$entryId])) {
+            unset($changes[$entryId]);
+            $this->setActiveEntry($entryId);
+        }
+    }
+
+    public function clearChanges(string $language): void
+    {
+        $this->normaliseSession();
+        unset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES][$language]);
+    }
+
+    public function getStagedChanges(string $language): array
+    {
+        $this->normaliseSession();
+        return $_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES][$language] ?? [];
+    }
+
+    public function setActiveEntry(?string $entryId): void
+    {
+        $this->normaliseSession();
+        if ($entryId === null) {
+            unset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_ACTIVE]);
+            return;
+        }
+
+        $_SESSION[self::SESSION_NAMESPACE][self::SESSION_ACTIVE] = $entryId;
+    }
+
+    public function getActiveEntry(): ?string
+    {
+        $this->normaliseSession();
+        return $_SESSION[self::SESSION_NAMESPACE][self::SESSION_ACTIVE] ?? null;
+    }
+
+    public function applyChanges(string $language): void
+    {
+        $this->normaliseSession();
+        $changes = $this->getStagedChanges($language);
+
+        if (empty($changes)) {
+            return;
+        }
+
+        $path = $this->getFile($language);
+        if (!is_writable($path)) {
+            throw new RuntimeException(
+                sprintf(
+                    __("The %1\$s translation file is not writable", "edittraduction"),
+                    $language
+                )
+            );
+        }
+
+        $poLoader = new PoLoader();
+        $translations = $poLoader->loadFile($path);
+
+        foreach ($changes as $change) {
+            $entry = $this->findTranslation($translations, $change["context"], $change["original"], $change["plural"]);
+            if ($entry === null) {
+                continue;
+            }
+            $entry->translate($change["updated"]);
+        }
+
+        $poGenerator = new PoGenerator();
+        $poContents = $poGenerator->generateString($translations);
+
+        if (file_put_contents($path, $poContents, LOCK_EX) === false) {
+            throw new RuntimeException(
+                sprintf(
+                    __("Failed to write %1\$s translation file", "edittraduction"),
+                    $language
+                )
+            );
+        }
+
+        $this->updateMoFile($path);
+
+        unset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES][$language]);
+    }
+
+    public function getFile($lang)
+    {
+        return GLPI_ROOT . "/locales/$lang.po";
+    }
+
+    public function updateMoFile(string $path): bool
+    {
+        try {
+            $poLoader = new PoLoader();
+            $translations = $poLoader->loadFile($path);
+
+            $moFile = substr($path, 0, -3) . ".mo";
+            $moGenerator = new MoGenerator();
+            $moContents = $moGenerator->generateString($translations);
+
+            if (file_put_contents($moFile, $moContents, LOCK_EX) === false) {
+                throw new RuntimeException(
+                    sprintf(
+                        __("Failed to write compiled translation file %1\$s", "edittraduction"),
+                        basename($moFile)
+                    )
+                );
+            }
+
+            $translation_cache = Config::getCache("cache_trans");
+            $translation_cache->clear();
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Failed to compile MO file: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function upadteMoFile($path)
+    {
+        return $this->updateMoFile($path);
+    }
+
+    private function normaliseSession(): void
+    {
+        if (!isset($_SESSION[self::SESSION_NAMESPACE])) {
+            $_SESSION[self::SESSION_NAMESPACE] = [];
+        }
+
+        if (!isset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES])) {
+            $_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES] = [];
+        }
+
+        if (!isset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX])) {
+            $_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX] = [];
+        }
+
+        $changes = &$_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES];
+        if (!empty($changes)) {
+            $firstLanguage = reset($changes);
+            if (!is_array($firstLanguage)) {
+                $_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES] = [];
             } else {
-                $message = sprintf(__('The %1$s translation file is not writable. Please contact your administrator to update file permissions' , "edittraduction"), $_SESSION['edittraduction']['language']);
-                Session::addMessageAfterRedirect($message, true, ERROR);
-                Html::back();
-            } 
-        }
-    }
-
-    public function showBeforeUpdate(){
-        if (is_numeric($_POST['PreUpload'])) {
-            unset($_SESSION['edittraduction']['changes'][$_POST['PreUpload']]);
-        }
-        echo "<form action='".$this->getFormURL()."' method='post'>";
-        if (isset($_SESSION['edittraduction']['changes']) && !empty($_SESSION['edittraduction']['changes'])) {
-
-            echo "<table class='tab_cadre'>";
-            echo "<tr>";
-            echo "<th>" . __("Origin", 'edittraduction') . "</th>";
-            echo "<th>" . __("New value", 'edittraduction') . "</th>";
-            echo "<th>" . __("Action", 'edittraduction') . "</th>";
-            echo "</tr>";
-
-            foreach ($_SESSION['edittraduction']['changes'] as $key => $value) {
-                echo "<tr>";
-                echo "<td>" . $_SESSION['edittraduction']['init'][$key] . "</td>";
-                echo "<td>" . $value . "</td>";
-                echo "<td>" . "<button type='submit' name='PreUpload' class='vsubmit' value='".$key."'>"."<i class='fa fa-times'"."</button>" . "</td>";
-                echo "</tr>";
+                $firstEntry = reset($firstLanguage);
+                if (!is_array($firstEntry) || !array_key_exists("updated", $firstEntry)) {
+                    $_SESSION[self::SESSION_NAMESPACE][self::SESSION_CHANGES] = [];
+                }
             }
-
-            echo "</table>";
-            echo "<br/><br/>";
-            echo"<input type='submit' name='uploadSave' class='submit' value='".__("Update")."'>";
-            echo "<br/><br/>";
-            echo"<input type='submit' name='backsave' class='submit' value='".__("Back")."'>";
-            Html::closeForm();  
-        } else {
-            echo __('No data to update', 'edittraduction');
-            echo "<br/><br/>";
-            echo"<input type='submit' name='backsave' class='submit' value='".__("Back")."'>";
-            Html::closeForm();  
-
         }
     }
-    
-    /**
-     * getFile
-     *
-     * @param  string $lang
-     * @return string
-     */
-    public function getFile($lang) {
-        $locale_path = GLPI_ROOT . "/locales/$lang.po";
-        return $locale_path;
-    }
-        
-    /**
-     * upadteMoFile
-     *
-     * @param  string $path
-     * @return string|boolean
-     */
-    public function upadteMoFile($path) {
-        $moFile = substr($path, 0, -3) . ".mo";
-        $commande = "msgfmt -o " . $moFile . " -v " . $path;
-        $result = exec($commande);
 
-        $translation_cache = Config::getCache('cache_trans');
-        $translation_cache->clear();
-                
-        return $result;
+    private function ensureIndex(string $language): void
+    {
+        if (!isset($_SESSION[self::SESSION_NAMESPACE][self::SESSION_INDEX][$language])) {
+            $this->getTranslations($language);
+        }
+    }
+
+    private function buildEntryId($translation): string
+    {
+        $context = $translation->getContext() ?? "";
+        $original = $translation->getOriginal() ?? "";
+        $plural = $translation->getPlural() ?? "";
+
+        return sha1($context . "\x1f" . $original . "\x1f" . $plural);
+    }
+
+    private function findTranslation($collection, string $context, string $original, string $plural)
+    {
+        $entry = $collection->find($context === "" ? null : $context, $original);
+
+        if ($entry !== null) {
+            return $entry;
+        }
+
+        foreach ($collection as $translation) {
+            if (
+                ($translation->getContext() ?? "") === $context &&
+                $translation->getOriginal() === $original &&
+                ($translation->getPlural() ?? "") === $plural
+            ) {
+                return $translation;
+            }
+        }
+
+        return null;
     }
 }

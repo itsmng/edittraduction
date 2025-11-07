@@ -1,0 +1,6 @@
+{
+    "name": "itsmng/edittraduction",
+    "require": {
+        "gettext/gettext": "^5.7"
+    }
+}

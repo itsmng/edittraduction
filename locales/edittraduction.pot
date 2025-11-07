@@ -51,3 +51,88 @@ msgstr ""
 #: inc/profile.class.php:154
 msgid "Allow editing"
 msgstr ""
+
+#: front/edittraduction.form.php:95
+msgid "Pending change removed"
+msgstr ""
+
+#: front/edittraduction.form.php:105
+msgid "All pending changes cleared"
+msgstr ""
+
+#: front/edittraduction.form.php:177
+msgid "Pending change"
+msgstr ""
+
+#: front/edittraduction.form.php:178
+msgid "No translations match your search"
+msgstr ""
+
+#: front/edittraduction.form.php:182
+#: front/edittraduction.form.php:317
+msgid "Context"
+msgstr ""
+
+#: front/edittraduction.form.php:210
+msgid "Select language"
+msgstr ""
+
+#: front/edittraduction.form.php:215
+msgid "Language"
+msgstr ""
+
+#: front/edittraduction.form.php:232
+msgid "Switch"
+msgstr ""
+
+#: front/edittraduction.form.php:242
+msgid "Search translations"
+msgstr ""
+
+#: front/edittraduction.form.php:246
+msgid "Search…"
+msgstr ""
+
+#: front/edittraduction.form.php:253
+msgid "Focused editor"
+msgstr ""
+
+#: front/edittraduction.form.php:256
+msgid "List view"
+msgstr ""
+
+#: front/edittraduction.form.php:268
+msgid "Translation"
+msgstr ""
+
+#: front/edittraduction.form.php:274
+msgid "Original text"
+msgstr ""
+
+#: front/edittraduction.form.php:280
+msgid "Stage change"
+msgstr ""
+
+#: front/edittraduction.form.php:297
+msgid "Pending changes"
+msgstr ""
+
+#: front/edittraduction.form.php:333
+msgid "Remove pending change"
+msgstr ""
+
+#: front/edittraduction.form.php:340
+msgid "Remove"
+msgstr ""
+
+#: front/edittraduction.form.php:355
+msgid "Apply changes"
+msgstr ""
+
+#: front/edittraduction.form.php:361
+msgid "Discard all"
+msgstr ""
+
+#: front/edittraduction.form.php:367
+msgid "No pending changes"
+msgstr ""

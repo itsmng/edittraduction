@@ -8,8 +8,6 @@ Installing this plugin is done following the standard process for itsm plugins, 
 
 Don't forget to set Apache rights, and enjoy !
 
-`Note: To use this plugin, you should install gettext library.`
-
 ## Usage
 
 Go to `Tools > Translation editor`.
