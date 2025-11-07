@@ -450,3 +450,110 @@
   margin: 0;
   color: var(--bs-secondary-color, #6c757d);
 }
+
+/* Custom button styles to replace Bootstrap */
+.et-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background-color: transparent;
+  color: inherit;
+  min-height: 2.5rem;
+}
+
+.et-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.et-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.et-btn:focus {
+  outline: 2px solid rgba(13, 110, 253, 0.4);
+  outline-offset: 2px;
+}
+
+.et-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Primary button */
+.et-btn--primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+
+.et-btn--primary:hover:not(:disabled) {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.et-btn--primary:focus {
+  outline-color: rgba(13, 110, 253, 0.4);
+}
+
+/* Secondary button */
+.et-btn--secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+.et-btn--secondary:hover:not(:disabled) {
+  background-color: #5c636a;
+  border-color: #565e64;
+}
+
+.et-btn--secondary:focus {
+  outline-color: rgba(108, 117, 125, 0.4);
+}
+
+/* Success button */
+.et-btn--success {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+
+.et-btn--success:hover:not(:disabled) {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.et-btn--success:focus {
+  outline-color: rgba(25, 135, 84, 0.4);
+}
+
+/* Outline secondary button */
+.et-btn--outline-secondary {
+  background-color: transparent;
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.et-btn--outline-secondary:hover:not(:disabled) {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.et-btn--outline-secondary:focus {
+  outline-color: rgba(108, 117, 125, 0.4);
+}
