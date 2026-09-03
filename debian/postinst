@@ -15,4 +15,5 @@ if [ -f /etc/itsm-ng/config_db.php ]; then
 fi
 
 chown -R www-data:www-data /var/lib/itsm-ng
+chown -R www-data:www-data /usr/share/itsm-ng/locales
 exit 0
